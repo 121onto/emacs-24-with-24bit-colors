@@ -1,0 +1,19 @@
+This diff is a modified version of a diff written by Rüdiger Sonderfeld.
+
+The original diff can be found here:
+http://emacs.1067599.n5.nabble.com/RFC-Add-tty-True-Color-support-tt299962.html
+
+To enable the feature one must set one of 2 environment variables either
+ITERM_24BIT or KONSOLE_DBUS_SESSION. The former will enable ITU T.416 mode, the
+latter will use semi-colon seperators used by other terminals (and also
+supported by iterm development branch). If you also use tmux with the 24bit
+patch you may need to use the latter environment variable.
+
+I've added ITERM_24BIT as an environment variable to set that will cause emacs
+to use the : seperated values as specified by ITU T.416. These are apparently
+better to use and supported by iterm development branch.
+
+Other chagnes:
+- modified map_tty_color to set the color into the pixel field.
+- modified the colors defined to be the standard X11 list.
+- modified tty-color-desc to add missing colors on demand.

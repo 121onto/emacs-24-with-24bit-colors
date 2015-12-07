@@ -1007,11 +1007,21 @@ If FRAME is omitted or nil, use the selected frame."
 Value is a list of the form \(NAME INDEX R G B\).  The returned NAME or
 RGB value may not be the same as the argument COLOR, because the latter
 might need to be approximated if it is not supported directly."
+  ;; Here we are expeting to return (name idx (values)), be nice if we
+  ;; could just return the rgb, there is one use in
+  ;; read-face-attribute that uses the name unforutnately. To
+  ;; accomidate we just create entries with RGB values.
   (and (stringp color)
        (let ((color (tty-color-canonicalize color)))
-	  (or (assoc color (tty-color-alist frame))
-	      (let ((rgb (tty-color-standard-values color)))
-		(and rgb (tty-color-approximate rgb frame)))))))
+         (or (assoc color (tty-color-alist frame))
+             (let ((rgb (tty-color-standard-values color)) elt len)
+               (if rgb
+                   (if (< (display-color-cells frame) 16777216)
+                       (tty-color-approximate rgb frame)
+                     ;; Add this value to tty-color-alist
+                     (setq elt (append (list color (length tty-defined-color-alist)) rgb))
+                     (tty-modify-color-alist elt frame)
+                     elt)))))))
 
 (defun tty-color-gray-shades (&optional display)
   "Return the number of gray colors supported by DISPLAY's terminal.
